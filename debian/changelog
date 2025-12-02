@@ -1,0 +1,10 @@
+vocal-plasma (0.1.1) unstable; urgency=medium
+
+  * Initial release of Vocal Plasma
+  * High-quality text-to-speech for KDE Plasma desktop
+  * Text-to-Speech using Kokoro ONNX neural network model
+  * Supports multiple voices (American/British, Male/Female)
+  * Includes command-line interface and KDE Plasma shortcuts (Alt+Esc)
+  * Bundled with Kokoro v1.0 model and voice embeddings
+
+ -- Package Maintainer <maintainer@example.com>  Sun, 01 Dec 2025 12:00:00 +0000

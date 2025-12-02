@@ -1,0 +1,7 @@
+[Desktop Entry]
+Exec=wl-paste --primary | speak
+Name=text-to-speak
+NoDisplay=true
+StartupNotify=false
+Type=Application
+X-KDE-GlobalAccel-CommandShortcut=true

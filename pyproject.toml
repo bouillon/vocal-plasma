@@ -1,0 +1,15 @@
+[project]
+name = "kokoro-tts"
+version = "0.1.0"
+description = "Text-to-Speech using Kokoro ONNX model"
+requires-python = ">=3.13"
+dependencies = [
+    "kokoro-onnx>=0.4.9",
+    "numpy>=2.3.5",
+    "scipy>=1.16.3",
+    "sounddevice>=0.5.3",
+    "soundfile>=0.13.1",
+]
+
+[project.scripts]
+speak = "kokoro_tts.cli:main"

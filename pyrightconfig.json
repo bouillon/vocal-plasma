@@ -1,0 +1,29 @@
+{
+
+  "include": ["."],
+
+  "exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    "src/experimental",
+    "src/typestubs"
+  ],
+
+  "ignore": ["src/oldstuff"],
+
+  "defineConstant": {
+    "DEBUG": true
+  },
+
+  "stubPath": "/autosync/code-active-development/own_stubs",
+  "typeCheckingMode": "strict",
+
+  "reportMissingImports": true,
+  "reportMissingTypeStubs": false,
+
+  "pythonVersion": "3.13",
+  "pythonPlatform": "Linux",
+  
+  "venv": "env",
+  "venvPath": "."
+}

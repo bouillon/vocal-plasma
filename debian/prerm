@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+case "$1" in
+    remove|deconfigure)
+        # Nothing to do on remove - the .venv can stay in case of reinstall
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0

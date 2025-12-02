@@ -1,0 +1,23 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Model files
+*.onnx
+*.bin
+
+# Build artifacts
+debian/vocal-plasma/
+debian/.debhelper/
+debian/files
+debian/*.substvars
+debian/*.log
+debian/debhelper-build-stamp
+.*
