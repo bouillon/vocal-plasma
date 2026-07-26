@@ -25,6 +25,13 @@ Install
 
 Test: ``echo hello | speak``; select text and press ``Alt+Esc``.
 
+Release
+-------
+
+Publish the current version to GitHub (tag + deb + sha256)::
+
+    GITHUB_TOKEN=... ./release
+
 Clean
 -----
 

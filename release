@@ -1,0 +1,55 @@
+#!/bin/bash
+# publish the current version as a GitHub release with the deb attached
+# usage: GITHUB_TOKEN=... ./release
+
+set -euo pipefail
+
+cd "$(dirname "${BASH_SOURCE[0]}")"
+
+die() { echo "release: $*" >&2; exit 1; }
+
+[ -n "${GITHUB_TOKEN:-}" ] || die "GITHUB_TOKEN not set (fine-grained token, contents: read/write)"
+
+VERSION=$(dpkg-parsechangelog -SVersion)
+TAG="v$VERSION"
+DEB="dist/vocal-plasma_${VERSION}_all.deb"
+
+# owner/repo from origin url
+REPO=$(git remote get-url origin | sed -E 's#(git@github.com:|https://github.com/)##; s#\.git$##')
+
+[ -f "$DEB" ] || ./build
+[ -z "$(git status --porcelain)" ] || die "uncommitted changes - commit first"
+
+git push origin HEAD
+git rev-parse -q --verify "refs/tags/$TAG" >/dev/null || git tag "$TAG"
+git push origin "$TAG"
+
+api() { curl -sf -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "$@"; }
+
+# changelog entry as release notes
+NOTES=$(dpkg-parsechangelog -SChanges | tail -n +4 | sed 's/^  //')
+
+# create release, or reuse if the tag already has one
+RELEASE=$(api "https://api.github.com/repos/$REPO/releases/tags/$TAG" 2>/dev/null) || \
+RELEASE=$(api -X POST "https://api.github.com/repos/$REPO/releases" \
+    -d "$(python3 -c "import json,sys; print(json.dumps({'tag_name':'$TAG','name':'$TAG','body':sys.argv[1]}))" "$NOTES")")
+
+RELEASE_ID=$(echo "$RELEASE" | python3 -c "import json,sys; print(json.load(sys.stdin)['id'])")
+
+sha256sum "$DEB" > "$DEB.sha256"
+
+# replace assets of the same name, then upload
+for f in "$DEB" "$DEB.sha256"; do
+    name=$(basename "$f")
+    old_id=$(echo "$RELEASE" | python3 -c "
+import json,sys
+assets=json.load(sys.stdin).get('assets',[])
+print(next((a['id'] for a in assets if a['name']=='$name'),''))")
+    [ -n "$old_id" ] && api -X DELETE "https://api.github.com/repos/$REPO/releases/assets/$old_id"
+    echo "uploading $name..."
+    api -X POST -H "Content-Type: application/octet-stream" \
+        --data-binary @"$f" \
+        "https://uploads.github.com/repos/$REPO/releases/$RELEASE_ID/assets?name=$name" >/dev/null
+done
+
+echo "done: https://github.com/$REPO/releases/tag/$TAG"
