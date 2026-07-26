@@ -8,7 +8,10 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 
 die() { echo "release: $*" >&2; exit 1; }
 
-[ -n "${GITHUB_TOKEN:-}" ] || die "GITHUB_TOKEN not set (fine-grained token, contents: read/write)"
+GITHUB_TOKEN="${GITHUB_TOKEN:-$(cat ~/.config/github-token 2>/dev/null || true)}"
+[ -n "$GITHUB_TOKEN" ] || die "no token: set GITHUB_TOKEN or put it into ~/.config/github-token
+  create at github.com -> Settings -> Developer settings -> Fine-grained tokens
+  (repo: vocal-plasma, permission Contents: read/write)"
 
 VERSION=$(dpkg-parsechangelog -SVersion)
 TAG="v$VERSION"
@@ -20,7 +23,8 @@ REPO=$(git remote get-url origin | sed -E 's#(git@github.com:|https://github.com
 [ -f "$DEB" ] || ./build
 [ -z "$(git status --porcelain)" ] || die "uncommitted changes - commit first"
 
-git push origin HEAD
+DEFAULT_BRANCH=$(git ls-remote --symref origin HEAD | awk '/^ref:/{sub("refs/heads/","",$2); print $2}')
+git push origin "HEAD:$DEFAULT_BRANCH"
 git rev-parse -q --verify "refs/tags/$TAG" >/dev/null || git tag "$TAG"
 git push origin "$TAG"
 
