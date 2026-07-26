@@ -36,7 +36,7 @@ NOTES=$(dpkg-parsechangelog -SChanges | tail -n +4 | sed 's/^  //')
 # create release, or reuse if the tag already has one
 RELEASE=$(api "https://api.github.com/repos/$REPO/releases/tags/$TAG" 2>/dev/null) || \
 RELEASE=$(api -X POST "https://api.github.com/repos/$REPO/releases" \
-    -d "$(python3 -c "import json,sys; print(json.dumps({'tag_name':'$TAG','name':'$TAG','body':sys.argv[1]}))" "$NOTES")")
+    -d "$(python3 -c "import json,sys; print(json.dumps({'tag_name':'$TAG','name':'Vocal Plasma $TAG','body':sys.argv[1]}))" "$NOTES")")
 
 RELEASE_ID=$(echo "$RELEASE" | python3 -c "import json,sys; print(json.load(sys.stdin)['id'])")
 
