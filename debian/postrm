@@ -4,38 +4,13 @@ set -e
 
 case "$1" in
     purge)
-        echo "Removing Kokoro TTS installation..."
+        rm -rf /opt/kokoro-tts
 
-        # Remove virtual environment
-        if [ -d /opt/kokoro-tts/.venv ]; then
-            echo "Removing virtual environment..."
-            rm -rf /opt/kokoro-tts/.venv
-        fi
-
-        # Remove the entire opt directory if empty
-        if [ -d /opt/kokoro-tts ] && [ -z "$(ls -A /opt/kokoro-tts)" ]; then
-            echo "Removing Kokoro TTS directory..."
-            rmdir /opt/kokoro-tts
-        fi
-
-        # Remove KDE shortcuts for all users
-        echo "Removing KDE Plasma shortcuts..."
-        for config_file in /root/.config/kglobalshortcutsrc ~/.config/kglobalshortcutsrc; do
-            if [ -f "$config_file" ]; then
-                # Remove the net.local.sh.desktop section
-                sed -i '/^\[services\]\[net\.local\.sh\.desktop\]/,/^\[.*\]$/d' "$config_file" 2>/dev/null || true
-            fi
+        # drop shortcut section, keep the next section header
+        for config_file in /root/.config/kglobalshortcutsrc /home/*/.config/kglobalshortcutsrc; do
+            [ -f "$config_file" ] || continue
+            sed -i '/^\[services\]\[net\.local\.sh\.desktop\]/,/^\[/{/^\[services\]\[net\.local\.sh\.desktop\]/d;/^\[/!d}' "$config_file" 2>/dev/null || true
         done
-
-        # Remove desktop file
-        if [ -f /usr/share/applications/net.local.sh.desktop ]; then
-            rm -f /usr/share/applications/net.local.sh.desktop
-        fi
-
-        echo "Kokoro TTS removed."
-        ;;
-    remove|disappear)
-        # Keep user configs and venv on regular remove
         ;;
 esac
 

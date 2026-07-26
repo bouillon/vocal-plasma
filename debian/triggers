@@ -1,0 +1,2 @@
+# fires when python3-defaults moves /usr/bin/python3 to a new version
+interest-noawait /usr/bin/python3

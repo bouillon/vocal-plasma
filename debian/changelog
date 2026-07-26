@@ -1,3 +1,25 @@
+vocal-plasma (0.1.3) unstable; urgency=medium
+
+  * Russian TTS via Piper (ru_RU-irina-medium, offline, bundled)
+  * Auto language detection: Cyrillic text -> Russian voice, else Kokoro
+  * speak flags: -l/--lang auto|en|ru, -v/--voice, -s/--speed, -h
+  * kokoro-venv-setup: sync step installs new deps into the existing venv
+    before falling back to a full rebuild
+
+ -- vlad <v@piratweb.com>  Sun, 26 Jul 2026 19:55:00 +0200
+
+vocal-plasma (0.1.2) unstable; urgency=medium
+
+  * Venv survives python3 version bumps: new kokoro-venv-setup relinks the
+    venv to its python (offline) or rebuilds it; speak self-checks on start;
+    dpkg trigger on /usr/bin/python3
+  * Depends: add python3-venv; drop python3-pip, curl, wget, needrestart
+  * Support python >= 3.11 (was 3.13 only)
+  * build.sh -> build, binary-only build, artifacts in dist/
+  * postrm purge: clean shortcuts of all /home users, not only root
+
+ -- vlad <v@piratweb.com>  Sun, 26 Jul 2026 19:32:52 +0200
+
 vocal-plasma (0.1.1) unstable; urgency=medium
 
   * Initial release of Vocal Plasma

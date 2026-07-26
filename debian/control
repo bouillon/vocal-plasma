@@ -1,7 +1,7 @@
 Source: vocal-plasma
 Section: sound
 Priority: optional
-Maintainer: Package Maintainer <maintainer@example.com>
+Maintainer: vlad <v@piratweb.com>
 Build-Depends: debhelper-compat (= 13)
 Standards-Version: 4.7.2
 Homepage: https://github.com/thewh1teagle/kokoro-onnx
@@ -10,14 +10,10 @@ Rules-Requires-Root: no
 Package: vocal-plasma
 Architecture: all
 Depends: ${misc:Depends},
-         python3,
-         python3-pip,
+         python3 (>= 3.11),
+         python3-venv,
          pulseaudio-utils,
-         wl-clipboard,
-         curl,
-         wget,
-         needrestart
-Recommends: uv
+         wl-clipboard
 Description: High-quality text-to-speech for KDE Plasma
  Vocal Plasma is a high-quality text-to-speech system using the Kokoro ONNX
  neural network model. It provides natural-sounding speech synthesis with

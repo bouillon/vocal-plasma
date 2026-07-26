@@ -1,0 +1,21 @@
+#!/bin/bash
+# build the deb into dist/
+
+set -e
+
+cd "$(dirname "${BASH_SOURCE[0]}")"
+mkdir -p dist
+
+# russian piper voice (kokoro models predate this and just live in the repo dir)
+PIPER_URL="https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ru/ru_RU/irina/medium"
+for f in ru_RU-irina-medium.onnx ru_RU-irina-medium.onnx.json; do
+    [ -f "$f" ] || curl -L -o "$f" "$PIPER_URL/$f"
+done
+
+dpkg-buildpackage -us -uc -b -d
+
+mv -f ../vocal-plasma_*.deb ../vocal-plasma_*.changes ../vocal-plasma_*.buildinfo dist/
+
+echo
+ls -lh dist/vocal-plasma_*.deb
+echo "install: dpkg -i dist/vocal-plasma_*.deb"

@@ -6,85 +6,41 @@ setup_kde_shortcut_for_user() {
     local user_home="$1"
     local config_file="$user_home/.config/kglobalshortcutsrc"
 
-    if [ ! -d "$user_home" ]; then
-        return
-    fi
+    [ -d "$user_home" ] || return 0
+    [ "$user_home" = "/root" ] && return 0
+    [ -f "$config_file" ] || return 0
+    grep -qF "[services][net.local.sh.desktop]" "$config_file" && return 0
 
-    # Skip if user is root (no KDE session)
-    if [ "$user_home" = "/root" ]; then
-        return
-    fi
+    cp "$config_file" "$config_file.bak"
+    cat >> "$config_file" <<EOF
 
-    echo "Setting up KDE Plasma shortcut for user $user_home..."
-
-    # Backup existing config
-    if [ -f "$config_file" ]; then
-        cp "$config_file" "$config_file.backup.$(date +%Y%m%d_%H%M%S)"
-    fi
-
-    # Desktop file already installed by debian/install
-    DESKTOP_ID="net.local.sh"
-    SHORTCUT_KEY="Alt+Esc"
-    COMPONENT="services][${DESKTOP_ID}.desktop"
-
-    # Add the shortcut to kglobalshortcutsrc if not already present
-    if [ -f "$config_file" ]; then
-        if ! grep -q "^\[services\]\[${DESKTOP_ID}.desktop\]" "$config_file"; then
-            echo "Adding shortcut entry to $config_file..."
-            cat >> "$config_file" <<EOF
-
-[services][${DESKTOP_ID}.desktop]
-_launch=$SHORTCUT_KEY
+[services][net.local.sh.desktop]
+_launch=Alt+Esc
 EOF
-        else
-            echo "Shortcut already configured in $config_file"
-        fi
-    fi
+    echo "Alt+Esc shortcut added for $user_home"
 }
 
 case "$1" in
     configure)
-        echo "Setting up Kokoro TTS..."
+        /usr/bin/kokoro-venv-setup || echo "WARNING: venv setup failed, rerun: kokoro-venv-setup" >&2
 
-        # Create virtual environment if it doesn't exist
-        if [ ! -d /opt/kokoro-tts/.venv ]; then
-            echo "Creating Python virtual environment..."
-            python3 -m venv /opt/kokoro-tts/.venv
+        # legacy self-symlink from <= 0.1.1
+        [ -L /usr/share/kokoro-tts/models ] && rm -f /usr/share/kokoro-tts/models
 
-            # Activate and install dependencies
-            echo "Installing dependencies..."
-            /opt/kokoro-tts/.venv/bin/pip install --upgrade pip setuptools wheel
-            /opt/kokoro-tts/.venv/bin/pip install -e /opt/kokoro-tts
-        fi
-
-        # Create symlink for global model access
-        if [ ! -L /usr/share/kokoro-tts/models ]; then
-            ln -sf /usr/share/kokoro-tts /usr/share/kokoro-tts/models
-        fi
-
-        echo ""
-        echo "Setting up KDE Plasma shortcuts for all users..."
-
-        # Setup shortcuts for all users with home directories
         for user_home in /home/*; do
-            setup_kde_shortcut_for_user "$user_home"
+            setup_kde_shortcut_for_user "$user_home" || true
         done
 
         echo ""
-        echo "Kokoro TTS installed successfully!"
-        echo ""
-        echo "KDE Plasma shortcut (Alt+Esc) has been configured."
-        echo ""
-        echo "To test the installation:"
-        echo "  echo 'Hello world' | speak"
-        echo ""
-        echo "Available voices: af_sky (default), af_bella, af_nicole, af_sarah,"
-        echo "                  am_michael, am_adam, bf_emma, bf_isabella,"
-        echo "                  bm_george, bm_lewis"
-        echo ""
-        echo "If the shortcut doesn't work immediately:"
-        echo "  1. Try pressing Alt+Esc again"
-        echo "  2. Or log out and log back in"
+        echo "Test:    echo 'Hello world' | speak"
+        echo "Hotkey:  select text, press Alt+Esc (re-login if it does not fire)"
+        echo "Voices:  af_sky (default), af_bella, af_nicole, af_sarah, am_michael,"
+        echo "         am_adam, bf_emma, bf_isabella, bm_george, bm_lewis"
+        ;;
+
+    triggered)
+        # /usr/bin/python3 changed
+        /usr/bin/kokoro-venv-setup || echo "WARNING: venv setup failed, rerun: kokoro-venv-setup" >&2
         ;;
 esac
 

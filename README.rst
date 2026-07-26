@@ -35,7 +35,9 @@ Command Line
 .. code-block:: bash
 
     echo "Hello world" | speak
+    echo "Миру мир!" | speak        # Russian auto-detected
     cat document.txt | speak
+    speak -h                        # all options
 
 KDE Plasma Shortcut
 ~~~~~~~~~~~~~~~~~~~
@@ -46,17 +48,25 @@ The keyboard shortcut is configured automatically during installation:
 2. Select any text
 3. Press ``Alt+Esc`` to hear it spoken
 
+Languages
+---------
+
+- **English** — Kokoro model, 10 voices
+- **Russian** — Piper model (ru_RU-irina-medium), bundled
+
+Language is auto-detected: Cyrillic text is spoken by the Russian voice.
+Override with ``speak -l en`` / ``speak -l ru``.
+
 Available Voices
 ----------------
 
-Choose from natural-sounding voices:
+Choose from natural-sounding voices (``speak -v NAME``):
 
 - **American Female:** af_sky (default), af_bella, af_nicole, af_sarah
 - **American Male:** am_michael, am_adam
 - **British Female:** bf_emma, bf_isabella
 - **British Male:** bm_george, bm_lewis
-
-To change the default voice, edit ``/opt/kokoro-tts/kokoro_tts/core.py``
+- **Russian Female:** irina (used automatically for Russian text)
 
 Building from Source
 --------------------
@@ -104,3 +114,10 @@ Kokoro uses two files for speech synthesis:
    Voice embeddings containing characteristics for 47 different voices across multiple languages and accents.
 
 The model processes text and voice data together to generate natural-sounding speech with the selected voice characteristics.
+
+Python upgrades
+~~~~~~~~~~~~~~~
+
+When Debian moves ``python3`` to a new version, ``speak`` and a dpkg trigger run
+``kokoro-venv-setup``, which re-points the venv to its python (offline) or
+rebuilds it.

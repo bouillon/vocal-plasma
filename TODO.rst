@@ -4,9 +4,10 @@ TODO
 Languages and Voices
 --------------------
 
-- [ ] Make languages and voices easily choosable (command-line options, config file, autodetection)
-- [ ] Add support for more languages (currently only English)
-- [ ] Expand voice options beyond current 10 voices
+- [x] Command-line options + language autodetection (0.1.3)
+- [x] Russian (0.1.3, Piper irina)
+- [ ] Config file for defaults (voice, speed)
+- [ ] More languages / more Russian voices (denis, dmitri, ruslan)
 
 GPU Acceleration
 ----------------
@@ -15,6 +16,16 @@ GPU Acceleration
 - [ ] Add GPU acceleration support for AMD cards (ROCm)
 - [ ] Add auto-detection to choose GPU vs CPU based on hardware
 - [ ] Document GPU setup instructions in README
+
+Speech-to-Text (dictation)
+--------------------------
+
+- [ ] Voice input: hotkey -> record mic -> whisper.cpp (offline) -> text into clipboard/active window
+
+Packaging
+---------
+
+- [ ] Rename legacy desktop id ``net.local.sh.desktop`` (needs kglobalshortcutsrc migration)
 
 Distribution Support
 --------------------

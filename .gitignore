@@ -11,7 +11,11 @@ wheels/
 
 # Model files
 *.onnx
+*.onnx.json
 *.bin
+
+# Generated demos
+demos/
 
 # Build artifacts
 debian/vocal-plasma/

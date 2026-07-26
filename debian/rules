@@ -15,23 +15,27 @@ override_dh_auto_install:
 	# Install model files
 	cp kokoro-v1.0.onnx debian/vocal-plasma/usr/share/kokoro-tts/
 	cp voices-v1.0.bin debian/vocal-plasma/usr/share/kokoro-tts/
+	cp ru_RU-irina-medium.onnx debian/vocal-plasma/usr/share/kokoro-tts/
+	cp ru_RU-irina-medium.onnx.json debian/vocal-plasma/usr/share/kokoro-tts/
 
 	# Install Python package
 	cp -r kokoro_tts debian/vocal-plasma/opt/kokoro-tts/
+	rm -rf debian/vocal-plasma/opt/kokoro-tts/kokoro_tts/__pycache__
 	cp pyproject.toml debian/vocal-plasma/opt/kokoro-tts/
 	cp README.rst debian/vocal-plasma/opt/kokoro-tts/
-	cp test-audio.py debian/vocal-plasma/opt/kokoro-tts/
 
 	# Install shell scripts as executables with proper names
 	mkdir -p debian/vocal-plasma/usr/bin
 	cp INSTALL-MODELS.sh debian/vocal-plasma/usr/bin/kokoro-install-models
 	cp SETUP-KDE-PLASMA-SHORTCUT.sh debian/vocal-plasma/usr/bin/kokoro-setup-shortcut
+	cp venv-setup.sh debian/vocal-plasma/usr/bin/kokoro-venv-setup
 	cp speak-wrapper.sh debian/vocal-plasma/usr/bin/speak
 
 override_dh_fixperms:
 	dh_fixperms
 	chmod +x debian/vocal-plasma/usr/bin/kokoro-install-models
 	chmod +x debian/vocal-plasma/usr/bin/kokoro-setup-shortcut
+	chmod +x debian/vocal-plasma/usr/bin/kokoro-venv-setup
 	chmod +x debian/vocal-plasma/usr/bin/speak
 
 override_dh_auto_test:
